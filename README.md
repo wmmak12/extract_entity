@@ -4,6 +4,7 @@
 [![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run)
 - Click on the cloud-run-button to deploy the service to your Google Cloud account
 - Will need to ensure container memory is set to at least 1gb
+- Set cloud run port to 8888 :)
 
 ## TL:DR
 There are a total of 3 different APIs:
