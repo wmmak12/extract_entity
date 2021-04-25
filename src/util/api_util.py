@@ -18,12 +18,14 @@ class Scrapper:
         }
         self.page_type = None
         self.content = None
+        self.url = None
         self.has_problems = False
         self.problem_details = ''
 
-    def fetch_url(self, url: str) -> str:
+    def fetch_url(self, url: str) -> None:
+        # Fetch the requested url
         self.url = url
-        self.content = requests.get(url)
+        self.content = requests.get(self.url)
     
     def __validate_type_url_content(self):
         # Check the content return
@@ -31,10 +33,12 @@ class Scrapper:
         self.page_type = re.findall(r'csv|html', page_type)[0]
     
     def identify_entities(self):
+        # Validate the page type (html or csv) and identify the entities according to page type
         self.__validate_type_url_content()
         return self.identify_methods[self.page_type]() if self.page_type else None
 
     def identify_entities_by_csv(self) -> list:
+        # Recognize that it is a csv and will extract entities based on csv format
         html_content = self.content.text
         remove_header_content = re.split(r'\n', html_content, maxsplit=1)[1]
         text = get_text(remove_header_content)
@@ -55,6 +59,7 @@ class Scrapper:
             return cleaned_entities
     
     def identify_entities_by_text(self) -> list:
+        # Recognize that it is a html page and will extract entities based on html format
         html_content = self.content.text
         text = get_text(html_content)
         doc = nlp(text)
@@ -73,15 +78,17 @@ class Scrapper:
             return cleaned_entities
 
     def __clean_and_remove_duplicates(self, entities_list, if_csv=False) -> list:
+        # Clean and removed the identified entities
         if if_csv:
             reg_pat = r"""'s.*|’s.*|LLP|PTE|“.*|\""""
         else:
             reg_pat = r""", .*|'s.*|’s.*|LLP|PTE|“.*|\""""
         cleaned_list = list({re.sub(reg_pat, '', ent) for ent in entities_list})
-        cleaned_list = [clean for clean in cleaned_list if clean!='']
+        cleaned_list = [clean for clean in cleaned_list if clean != '']
         return cleaned_list
 
     def fetch_short_description(self) -> list:
+        # Fetch a short description of the entity found in wikipedia.
         for ent in self.entities_details:
             entity = ent['extracted_entity']
             try:
@@ -102,6 +109,7 @@ class DataStorage:
         self.ENGINE = engine
     
     def insert_data(self, entity: dict) -> None:
+        # Insert data to the database
         cursor = self.ENGINE.connect()
         link = entity['links']
         extracted_entity = entity['extracted_entity']
@@ -113,11 +121,13 @@ class DataStorage:
         cursor.execute(statement)
         
     def fetch_all_entities(self):
+        # Fetch all collected(scraped) entities
         q = "SELECT extracted_entity FROM extracted_entities"
         df = pd.read_sql(q, self.ENGINE)
         return df
     
-    def fetch_single_entity(self, entity):
+    def fetch_single_entity(self, entity: str):
+        # Fetch a single entity with a short description of it.
         query = f"""
                 SELECT extracted_entity, entity_details 
                 FROM extracted_entities

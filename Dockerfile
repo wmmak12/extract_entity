@@ -7,7 +7,7 @@ RUN apt-get -y install gcc
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
-EXPOSE 8080
+EXPOSE 8888
 
 # Copy files into docker
 WORKDIR /usr/extract_entity/
@@ -24,5 +24,5 @@ RUN python -m spacy download en_core_web_sm
 RUN python3 create_sqlite_db.py
 
 # Main API service Command
-CMD ["gunicorn", "--workers", "5", "--worker-class", "meinheld.gmeinheld.MeinheldWorker", "--timeout", "120", "-b", "0.0.0.0:8080", "extract_entity_api:__hug_wsgi__"]
+CMD ["gunicorn", "--workers", "5", "--worker-class", "meinheld.gmeinheld.MeinheldWorker", "--timeout", "120", "-b", "0.0.0.0:8888", "extract_entity_api:__hug_wsgi__"]
 
