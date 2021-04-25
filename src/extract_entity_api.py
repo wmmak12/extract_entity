@@ -45,5 +45,5 @@ def fetch_entity_details(entity: hug.types.text, sqlite_db_path: str = 'gic.db')
 
 @hug.not_found()
 def not_found_handler():
-    return "Page not found. Use "
+    return "Page not found. Use one of the API calls found in Readme. Thanks!"
 
