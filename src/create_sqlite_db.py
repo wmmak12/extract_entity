@@ -1,7 +1,4 @@
 import pandas as pd
-
-import sys
-sys.path.append('./src')
 import util.general_util as gu
 
 

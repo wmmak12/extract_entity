@@ -1,7 +1,4 @@
 import hug
-
-import sys
-sys.path.append('./src')
 import util.general_util as gu
 from util.api_util import Scrapper, DataStorage
 
@@ -48,5 +45,5 @@ def fetch_entity_details(entity: hug.types.text, sqlite_db_path: str = 'gic.db')
 
 @hug.not_found()
 def not_found_handler():
-    return "Page not found"
+    return "Page not found. Use "
 
